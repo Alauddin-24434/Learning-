@@ -76,3 +76,38 @@ User.findByEmail('john.doe@example.com')
   .catch(err => console.error('ব্যবহারকারী খুঁজতে ত্রুটি:', err));
 
 </pre>
+
+# তুলনা: ইন্সট্যান্স মেথড বনাম স্ট্যাটিক মেথড
+
+## 1. ইন্সট্যান্স মেথড:
+i. আলাদা ডকুমেন্ট ইন্সট্যান্সের উপর কাজ করে।
+ii. this ব্যবহার করে নির্দিষ্ট ডকুমেন্ট ইন্সট্যান্স নির্দেশ করে।
+iii. schema.methods এ সংজ্ঞায়িত হয়।
+
+## 2. স্ট্যাটিক মেথড:
+i. মডেলের উপর কাজ করে।
+ii. this ব্যবহার করে মডেল নির্দেশ করে।
+iii. schema.statics এ সংজ্ঞায়িত হয়।
+
+### উদাহরণ ব্যবহার
+ইন্সট্যান্স মেথড: ডকুমেন্ট ডেটা পরিবর্তন, ভ্যালিডেশন, বা একটি একক ডকুমেন্টের উপর জটিল লজিক প্রয়োগ করতে উপযোগী।
+<pre>
+  userSchema.methods.updateEmail = function(newEmail) {
+  this.email = newEmail;
+  return this.save();
+};
+
+const user = await User.findById(userId);
+await user.updateEmail('new.email@example.com');
+
+</pre>
+স্ট্যাটিক মেথড: কাস্টম কুয়েরি, অ্যাগ্রিগেশন, বা ব্যাচ অপারেশন পরিচালনা করতে উপযোগী।
+<pre>
+  userSchema.statics.findByAgeRange = function(minAge, maxAge) {
+  return this.find({ age: { $gte: minAge, $lte: maxAge } });
+};
+
+const users = await User.findByAgeRange(20, 30);
+console.log(users);
+
+</pre>
